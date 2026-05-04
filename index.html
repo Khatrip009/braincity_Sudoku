@@ -220,19 +220,45 @@
             .sudoku-grid { width:460px; height:460px; }
         }
 
+        /* ── PRINT STYLES (Branded Worksheet) ── */
         @media print {
             @page { size:letter; margin:0.5in 0.45in; }
             body { background:#fff; }
             .site-header, .site-footer, .install-banner, .app-container, .card,
             .format-selector, .difficulty-selector, .number-pad, .actions, .message, .timer, .grid-wrapper { display:none !important; }
-            .worksheet-section { display:block !important; position:static !important; left:auto !important; top:auto !important; padding:0; }
+            .worksheet-section {
+                display:block !important; position:static !important; left:auto !important; top:auto !important;
+                padding:0; background:#fff; color:var(--deep-indigo);
+            }
             .worksheet-section * { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
-            .print-header { display:flex !important; align-items:center; justify-content:center; gap:14px; margin-bottom:26px; padding-bottom:14px; border-bottom:3px solid #1B4332; }
+
+            /* Print Header */
+            .print-header {
+                display:flex !important; align-items:center; justify-content:center;
+                gap:14px; margin-bottom:26px; padding-bottom:14px;
+                border-bottom:3px solid var(--deep-indigo);
+            }
             .print-header .print-logo { height:48px; width:auto; }
             .print-header .print-brand { text-align:left; }
-            .print-header .print-company { font-size:1.4rem; font-weight:800; color:#1B4332; letter-spacing:0.04em; }
-            .print-header .print-tagline { font-size:0.68rem; font-weight:600; color:#E67E5E; text-transform:uppercase; letter-spacing:0.08em; }
-            .print-footer { display:flex !important; align-items:center; justify-content:center; gap:10px; margin-top:26px; padding-top:10px; border-top:2px solid #e0d6c8; text-align:center; font-size:0.68rem; color:#6b5e4a; letter-spacing:0.04em; }
+            .print-header .print-company {
+                font-size:1.4rem; font-weight:800; color:var(--deep-indigo); letter-spacing:0.04em;
+            }
+            .print-header .print-tagline {
+                font-size:0.68rem; font-weight:600; color:var(--warm-coral);
+                text-transform:uppercase; letter-spacing:0.08em;
+            }
+
+            /* Worksheet Title */
+            .worksheet-title {
+                font-size:1.5rem; font-weight:700; letter-spacing:0.03em; margin:0 0 4px; color:var(--deep-indigo);
+            }
+
+            /* Footer */
+            .print-footer {
+                display:flex !important; align-items:center; justify-content:center; gap:10px;
+                margin-top:26px; padding-top:10px; border-top:2px solid var(--muted-gold);
+                text-align:center; font-size:0.68rem; color:var(--charcoal); letter-spacing:0.04em;
+            }
             .print-footer .print-footer-logo { height:24px; width:auto; }
         }
     </style>
@@ -255,12 +281,10 @@
 
     <div class="app-container">
         <div class="card">
-            <!-- Format selector -->
             <div class="format-selector" id="formatSelector">
                 <button data-format="4x4">🧩 4x4 (2×2)</button>
                 <button data-format="9x9" class="active">🧩 9x9 (3×3)</button>
             </div>
-            <!-- Difficulty selector -->
             <div class="difficulty-selector" id="difficultySelector">
                 <button data-difficulty="easy" class="active">Easy</button>
                 <button data-difficulty="medium">Medium</button>
@@ -296,7 +320,7 @@
             <div class="print-brand"><div class="print-company">BrainCity</div><div class="print-tagline">One Stop Math Solution</div></div>
         </div>
         <div style="text-align:center;margin-bottom:22px;">
-            <h2 style="font-size:1.5rem;font-weight:700;letter-spacing:0.03em;margin:0 0 4px;color:#1B4332;">Sudoku Worksheet</h2>
+            <h2 class="worksheet-title">Sudoku Worksheet</h2>
             <p style="font-size:0.82rem;color:#666;margin:0;">Name: ____________________ &nbsp;&nbsp; Date: ______________ &nbsp;&nbsp; Score: _____ / <span id="wsPuzzleCount">4</span></p>
         </div>
         <div id="worksheetGridsContainer" style="display:grid;grid-template-columns:repeat(2,1fr);gap:30px 24px;max-width:700px;margin:0 auto;"></div>
@@ -341,7 +365,7 @@
         });
         btnDismissBanner.addEventListener('click', () => installBanner.style.display = 'none');
 
-        // ─── Sudoku Engine (generic) ───────────────
+        // ─── Sudoku Engine ───────────────
         function shuffle(a) { for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
 
         function isValidPlacement(grid, r, c, num, size, blockRows, blockCols) {
@@ -571,35 +595,50 @@
             else { pencilTog.innerHTML='✏️ Pencil Marks: <strong>OFF</strong>'; pencilTog.classList.remove('active'); }
         }
 
+        // ─── Worksheet Rendering (Branded Colors) ────
         function renderWSPuzzle(container, puzzle, idx, format) {
             const w=document.createElement('div'); w.style.cssText='text-align:center;page-break-inside:avoid;';
-            const lbl=document.createElement('p'); lbl.textContent=`Puzzle ${idx+1}`; lbl.style.cssText='font-size:0.82rem;font-weight:700;margin:0 0 5px;color:#1B4332;'; w.appendChild(lbl);
-            const tbl=document.createElement('table'); tbl.style.cssText='border-collapse:collapse;margin:0 auto;border:3px solid #3a3028;';
+            const lbl=document.createElement('p'); lbl.textContent=`Puzzle ${idx+1}`;
+            lbl.style.cssText = 'font-size:0.82rem;font-weight:700;margin:0 0 5px;color:#2C3E66;'; // Deep Indigo
+            w.appendChild(lbl);
+
+            const tbl=document.createElement('table');
+            tbl.style.cssText = 'border-collapse:collapse;margin:0 auto;border:3px solid #D9B48B;'; // Muted Gold outer border
             const sz=(format==='4x4'?4:9), br=(format==='4x4'?2:3), bc=br;
-            for(let r=0;r<sz;r++) {
+            for(let r=0; r<sz; r++) {
                 const tr=document.createElement('tr');
-                for(let c=0;c<sz;c++) {
-                    const td=document.createElement('td'); const v=puzzle[r][c]; td.textContent=v!==0?v:'';
-                    let st=`width:${sz===4?32:26}px;height:${sz===4?32:26}px;text-align:center;vertical-align:middle;font-family:'Segoe UI','Inter',sans-serif;font-weight:${v!==0?'700':'400'};color:#1a1a1a;border:1px solid #c8bfb0;${v!==0?'background:#fafaf7;':'background:#fff;'}`;
-                    if(c<sz-1&&(c+1)%bc===0) st+='border-right:3px solid #3a3028;';
-                    if(r<sz-1&&(r+1)%br===0) st+='border-bottom:3px solid #3a3028;';
-                    if(c===0) st+='border-left:3px solid #3a3028;';
-                    if(r===0) st+='border-top:3px solid #3a3028;';
-                    if(c===sz-1) st+='border-right:3px solid #3a3028;';
-                    if(r===sz-1) st+='border-bottom:3px solid #3a3028;';
-                    td.style.cssText=st; tr.appendChild(td);
+                for(let c=0; c<sz; c++) {
+                    const td=document.createElement('td');
+                    const v=puzzle[r][c];
+                    td.textContent = v!==0 ? v : '';
+                    let styles = `width:${sz===4?32:26}px;height:${sz===4?32:26}px;text-align:center;vertical-align:middle;font-family:'Segoe UI','Inter',sans-serif;font-weight:${v!==0?'700':'400'};color:${v!==0?'#2C3E66':'#2D2F36'};border:1px solid #c8bfb0;`;
+                    // Background: given cells have a subtle light gold, empty cells white
+                    if (v !== 0) {
+                        styles += 'background:#FDF8F2;'; // light warm background
+                    } else {
+                        styles += 'background:#FFFFFF;';
+                    }
+                    // 3x3/2x2 block borders in Muted Gold
+                    if (c < sz-1 && (c+1) % bc === 0) styles += 'border-right:3px solid #D9B48B;';
+                    if (r < sz-1 && (r+1) % br === 0) styles += 'border-bottom:3px solid #D9B48B;';
+                    if (c === 0) styles += 'border-left:3px solid #D9B48B;';
+                    if (r === 0) styles += 'border-top:3px solid #D9B48B;';
+                    if (c === sz-1) styles += 'border-right:3px solid #D9B48B;';
+                    if (r === sz-1) styles += 'border-bottom:3px solid #D9B48B;';
+                    td.style.cssText = styles;
+                    tr.appendChild(td);
                 }
                 tbl.appendChild(tr);
             }
-            w.appendChild(tbl); container.appendChild(w);
+            w.appendChild(tbl);
+            container.appendChild(w);
         }
 
         function genWorksheet() {
             const puzzles=[];
-            const num = (curFmt==='4x4') ? 6 : 4; // 6 small puzzles, 2 per row = 3 rows; 4 large puzzles, 2 per row = 2 rows
+            const num = (curFmt==='4x4') ? 6 : 4;
             for(let i=0;i<num;i++) puzzles.push(generatePuzzle(curFmt,curDiff));
             wsContainer.innerHTML='';
-            // Always 2 columns per row as requested for both formats
             wsContainer.style.gridTemplateColumns = 'repeat(2,1fr)';
             puzzles.forEach((d,i)=>renderWSPuzzle(wsContainer,d.puzzle,i,curFmt));
             wsPuzzleCount.textContent = num;
@@ -652,7 +691,7 @@
         // Init
         loadPuz('9x9','easy');
         genWorksheet();
-        console.log('🧩 BrainCity Sudoku – 4x4 & 9x9 ready (2 per row)');
+        console.log('🧩 BrainCity Sudoku – Branded Worksheet Ready');
     })();
     </script>
 </body>
