@@ -12,18 +12,14 @@
     <meta name="apple-mobile-web-app-title" content="BrainCity Sudoku">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#F0F2F5">
-    <meta name="description" content="BrainCity – One Stop Math Solution. Play Sudoku online or print worksheets. Install on your device for offline use.">
+    <meta name="description" content="BrainCity – One Stop Math Solution. Play 4x4 or 9x9 Sudoku online or print worksheets.">
 
-    <!-- Apple Touch Icon (uses logo) -->
     <link rel="apple-touch-icon" href="abacus_logo.png">
     <link rel="icon" type="image/png" href="abacus_logo.png">
-
-    <!-- PWA Manifest (blob URL generated via JS) -->
-    <link rel="manifest" id="pwaManifest">
+    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIkJyYWluQ2l0eSBTdWRva3UiLAogICJzaG9ydF9uYW1lIjogIlN1ZG9rdSIsCiAgImRlc2NyaXB0aW9uIjogIkJyYWluQ2l0eSAtIE9uZSBTdG9wIE1hdGggU29sdXRpb24uIFBsYXkgJiBQcmludCBTdWRva3UgV29ya3NoZWV0cy4iLAogICJzdGFydF91cmwiOiAiLiIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgIm9yaWVudGF0aW9uIjogInBvcnRyYWl0IiwKICAiYmFja2dyb3VuZF9jb2xvciI6ICIjRjBGMkY1IiwKICAidGhlbWVfY29sb3IiOiAiI0YwRjJGNSIsCiAgImljb25zIjogW3sKICAgICJzcmMiOiAiYWJhY3VzX2xvZ28ucG5nIiwKICAgICJzaXplcyI6ICIxOTJ4MTkyIiwKICAgICJ0eXBlIjogImltYWdlL3BuZyIKICB9LCB7CiAgICAic3JjIjogImFiYWN1c19sb2dvLnBuZyIsCiAgICAic2l6ZXMiOiAiNTEyeDUxMiIsCiAgICAidHlwZSI6ICJpbWFnZS9wbmciCiAgfV0KfQ==">
 
     <style>
         :root {
-            /* ── BrainCity Color Palette ── */
             --deep-indigo: #2C3E66;
             --soft-blue: #5D7B9F;
             --warm-coral: #E67E5E;
@@ -32,7 +28,6 @@
             --cool-gray: #F0F2F5;
             --white: #FFFFFF;
 
-            /* Header/Footer light version */
             --header-bg: var(--white);
             --header-text: var(--deep-indigo);
             --header-accent: var(--warm-coral);
@@ -41,7 +36,6 @@
             --footer-text: var(--deep-indigo);
             --footer-accent: var(--warm-coral);
 
-            /* Semantic assignments */
             --bg: var(--cool-gray);
             --surface: var(--white);
             --title-color: var(--deep-indigo);
@@ -60,651 +54,213 @@
             --error-color: #c0392b;
             --border-thin: #d9d5cc;
             --border-thick: var(--muted-gold);
-            --shadow: 0 2px 20px rgba(44, 46, 54, 0.07);
+            --shadow: 0 2px 20px rgba(44,46,54,0.07);
             --radius: 14px;
             --transition: 0.18s ease;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html {
-            font-size: 16px;
-            -webkit-text-size-adjust: 100%;
-        }
-
+        * { margin:0; padding:0; box-sizing:border-box; }
+        html { font-size:16px; -webkit-text-size-adjust:100%; }
         body {
             font-family: 'Segoe UI', 'Inter', system-ui, -apple-system, sans-serif;
-            background: var(--bg);
-            color: var(--body-text);
-            min-height: 100vh;
-            min-height: 100dvh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 0;
+            background: var(--bg); color: var(--body-text);
+            min-height:100vh; min-height:100dvh;
+            display:flex; flex-direction:column; align-items:center;
+            padding:0;
             -webkit-tap-highlight-color: transparent;
-            user-select: none;
-            -webkit-user-select: none;
-            -webkit-font-smoothing: antialiased;
+            user-select:none; -webkit-user-select:none;
+            -webkit-font-smoothing:antialiased;
         }
 
-        /* ── INSTALL BANNER ── */
         .install-banner {
-            display: none;
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            z-index: 200;
-            background: var(--white);
-            border-top: 3px solid var(--warm-coral);
-            padding: 14px 18px 16px;
-            box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.13);
-            animation: slideUp 0.35s ease-out;
+            position:fixed; bottom:0; left:0; right:0; z-index:200;
+            background:var(--white); border-top:3px solid var(--warm-coral);
+            padding:14px 18px 16px; box-shadow:0 -4px 24px rgba(0,0,0,0.13);
+            animation:slideUp 0.35s ease-out;
+            display:flex; align-items:center; justify-content:space-between;
+            gap:12px; flex-wrap:wrap;
         }
-        .install-banner.show {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-        @keyframes slideUp {
-            from { transform: translateY(100%); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-        .install-banner .banner-text {
-            font-size: 0.88rem;
-            font-weight: 600;
-            color: var(--deep-indigo);
-            letter-spacing: 0.02em;
-            flex: 1 1 auto;
-            min-width: 160px;
-        }
-        .install-banner .banner-text span {
-            display: block;
-            font-size: 0.72rem;
-            font-weight: 500;
-            color: var(--soft-blue);
-            letter-spacing: 0.03em;
-            text-transform: uppercase;
-        }
-        .install-banner .btn-install {
-            padding: 10px 22px;
-            border-radius: 24px;
-            font-size: 0.85rem;
-            font-weight: 700;
-            cursor: pointer;
-            letter-spacing: 0.03em;
-            background: var(--warm-coral);
-            color: #fff;
-            border: none;
-            white-space: nowrap;
-            transition: var(--transition);
-            flex-shrink: 0;
-        }
-        .install-banner .btn-install:hover {
-            background: #d46a4a;
-            box-shadow: 0 4px 16px rgba(230, 126, 94, 0.35);
-        }
-        .install-banner .btn-dismiss {
-            padding: 8px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 1.3rem;
-            color: #aaa;
-            line-height: 1;
-            flex-shrink: 0;
-        }
+        @keyframes slideUp { from{transform:translateY(100%);opacity:0;} to{transform:translateY(0);opacity:1;} }
+        .install-banner .banner-text { font-size:0.88rem; font-weight:600; color:var(--deep-indigo); letter-spacing:0.02em; flex:1 1 auto; min-width:160px; }
+        .install-banner .banner-text span { display:block; font-size:0.72rem; font-weight:500; color:var(--soft-blue); letter-spacing:0.03em; text-transform:uppercase; }
+        .install-banner .btn-install { padding:10px 22px; border-radius:24px; font-size:0.85rem; font-weight:700; cursor:pointer; letter-spacing:0.03em; background:var(--warm-coral); color:#fff; border:none; white-space:nowrap; transition:var(--transition); flex-shrink:0; }
+        .install-banner .btn-install:hover { background:#d46a4a; box-shadow:0 4px 16px rgba(230,126,94,0.35); }
+        .install-banner .btn-dismiss { padding:8px; background:none; border:none; cursor:pointer; font-size:1.3rem; color:#aaa; line-height:1; flex-shrink:0; }
 
-        /* ── HEADER (light) ── */
         .site-header {
-            width: 100%;
-            background: var(--header-bg);
-            padding: 10px 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-            border-bottom: 2px solid var(--header-border);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            flex-shrink: 0;
+            width:100%; background:var(--header-bg); padding:10px 18px;
+            display:flex; align-items:center; justify-content:center;
+            gap:12px; box-shadow:0 2px 12px rgba(0,0,0,0.06);
+            border-bottom:2px solid var(--header-border);
+            position:sticky; top:0; z-index:100; flex-shrink:0;
         }
-        .site-header .logo-img {
-            height: 42px;
-            width: auto;
-            object-fit: contain;
-            filter: drop-shadow(0 1px 3px rgba(0,0,0,0.08));
-            transition: transform 0.2s ease;
-        }
-        .site-header .logo-img:active {
-            transform: scale(1.08);
-        }
-        .site-header .brand-text {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 1px;
-        }
-        .site-header .company-name {
-            font-size: 1.4rem;
-            font-weight: 800;
-            color: var(--header-text);
-            letter-spacing: 0.04em;
-            line-height: 1.15;
-        }
-        .site-header .tagline {
-            font-size: 0.7rem;
-            font-weight: 600;
-            color: var(--header-accent);
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-        }
+        .site-header .logo-img { height:42px; width:auto; object-fit:contain; filter:drop-shadow(0 1px 3px rgba(0,0,0,0.08)); transition:transform 0.2s ease; }
+        .site-header .logo-img:active { transform:scale(1.08); }
+        .site-header .brand-text { display:flex; flex-direction:column; align-items:flex-start; gap:1px; }
+        .site-header .company-name { font-size:1.4rem; font-weight:800; color:var(--header-text); letter-spacing:0.04em; line-height:1.15; }
+        .site-header .tagline { font-size:0.7rem; font-weight:600; color:var(--header-accent); letter-spacing:0.08em; text-transform:uppercase; }
 
-        /* ── MAIN CONTAINER ── */
         .app-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 18px;
-            max-width: 520px;
-            width: 100%;
-            padding: 18px 12px 24px;
-            flex: 1 0 auto;
+            display:flex; flex-direction:column; align-items:center; gap:18px;
+            max-width:560px; width:100%; padding:18px 12px 24px; flex:1 0 auto;
         }
 
-        /* ── CARD ── */
         .card {
-            background: var(--surface);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            padding: 20px 14px 18px;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 16px;
-            border: 1px solid #e8e4da;
+            background:var(--surface); border-radius:var(--radius); box-shadow:var(--shadow);
+            padding:20px 14px 18px; width:100%; display:flex;
+            flex-direction:column; align-items:center; gap:16px;
+            border:1px solid #e8e4da;
         }
 
-        /* ── DIFFICULTY SELECTOR ── */
-        .difficulty-selector {
-            display: flex;
-            gap: 5px;
-            background: #eef1f3;
-            border-radius: 26px;
-            padding: 4px;
-            flex-wrap: wrap;
-            justify-content: center;
+        .format-selector, .difficulty-selector {
+            display:flex; gap:5px; background:#eef1f3; border-radius:26px;
+            padding:4px; flex-wrap:wrap; justify-content:center;
         }
-        .difficulty-selector button {
-            padding: 8px 14px;
-            border: none;
-            background: transparent;
-            border-radius: 22px;
-            cursor: pointer;
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: var(--soft-blue);
-            transition: var(--transition);
-            letter-spacing: 0.02em;
-            white-space: nowrap;
+        .format-selector button, .difficulty-selector button {
+            padding:8px 14px; border:none; background:transparent;
+            border-radius:22px; cursor:pointer; font-size:0.8rem; font-weight:600;
+            color:var(--soft-blue); transition:var(--transition); letter-spacing:0.02em; white-space:nowrap;
         }
-        .difficulty-selector button.active {
-            background: var(--white);
-            color: var(--warm-coral);
-            box-shadow: 0 1px 6px rgba(0,0,0,0.08);
-            font-weight: 700;
+        .format-selector button.active, .difficulty-selector button.active {
+            background:var(--white); color:var(--warm-coral);
+            box-shadow:0 1px 6px rgba(0,0,0,0.08); font-weight:700;
         }
-        .difficulty-selector button:hover:not(.active) {
-            color: var(--deep-indigo);
-            background: rgba(255,255,255,0.55);
+        .format-selector button:hover:not(.active), .difficulty-selector button:hover:not(.active) {
+            color:var(--deep-indigo); background:rgba(255,255,255,0.55);
         }
 
-        /* ── TIMER ── */
         .timer {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: var(--soft-blue);
-            letter-spacing: 0.05em;
-            font-variant-numeric: tabular-nums;
-            font-family: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+            font-size:1.2rem; font-weight:700; color:var(--soft-blue);
+            letter-spacing:0.05em; font-variant-numeric:tabular-nums;
+            font-family:'SF Mono','Cascadia Code','Consolas',monospace;
         }
 
-        /* ── GRID ── */
-        .grid-wrapper {
-            position: relative;
-        }
+        .grid-wrapper { position:relative; }
         .sudoku-grid {
-            display: grid;
-            grid-template-columns: repeat(9, 1fr);
-            grid-template-rows: repeat(9, 1fr);
-            width: min(380px, 82vw);
-            height: min(380px, 82vw);
-            border: 3px solid var(--border-thick);
-            border-radius: 8px;
-            overflow: hidden;
-            background: var(--border-thick);
-            gap: 1px;
+            display:grid;
+            width:min(380px,82vw); height:min(380px,82vw);
+            border:3px solid var(--border-thick); border-radius:8px;
+            overflow:hidden; background:var(--border-thick); gap:1px;
         }
         .sudoku-grid .cell {
-            background: var(--cell-bg);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: clamp(0.95rem, 3.6vw, 1.4rem);
-            font-weight: 600;
-            color: var(--user-color);
-            transition: background var(--transition);
-            position: relative;
-            aspect-ratio: 1;
+            background:var(--cell-bg); display:flex; align-items:center; justify-content:center;
+            cursor:pointer; font-weight:600; color:var(--user-color);
+            transition:background var(--transition); position:relative; aspect-ratio:1;
         }
-        .sudoku-grid .cell.given {
-            color: var(--given-color);
-            font-weight: 700;
-            cursor: default;
-        }
-        .sudoku-grid .cell.selected {
-            background: var(--cell-selected);
-            box-shadow: inset 0 0 0 2.5px var(--warm-coral);
-            z-index: 2;
-            border-radius: 3px;
-        }
-        .sudoku-grid .cell.related {
-            background: var(--cell-related);
-        }
-        .sudoku-grid .cell.same-number {
-            background: var(--cell-same-num);
-        }
-        .sudoku-grid .cell.selected.same-number {
-            background: #fcd5b8;
-            box-shadow: inset 0 0 0 2.5px var(--warm-coral);
-        }
-        .sudoku-grid .cell.error {
-            color: var(--error-color);
-            background: var(--cell-error);
-        }
-        .sudoku-grid .cell.error.selected {
-            background: #ffd4d4;
-            box-shadow: inset 0 0 0 2.5px #e74c3c;
-        }
-        .sudoku-grid .cell.box-right {
-            border-right: 2.5px solid var(--border-thick);
-            margin-right: -0.5px;
-            padding-right: 0.5px;
-        }
-        .sudoku-grid .cell.box-bottom {
-            border-bottom: 2.5px solid var(--border-thick);
-            margin-bottom: -0.5px;
-            padding-bottom: 0.5px;
-        }
+        .sudoku-grid .cell.given { color:var(--given-color); font-weight:700; cursor:default; }
+        .sudoku-grid .cell.selected { background:var(--cell-selected); box-shadow:inset 0 0 0 2.5px var(--warm-coral); z-index:2; border-radius:3px; }
+        .sudoku-grid .cell.related { background:var(--cell-related); }
+        .sudoku-grid .cell.same-number { background:var(--cell-same-num); }
+        .sudoku-grid .cell.selected.same-number { background:#fcd5b8; box-shadow:inset 0 0 0 2.5px var(--warm-coral); }
+        .sudoku-grid .cell.error { color:var(--error-color); background:var(--cell-error); }
+        .sudoku-grid .cell.error.selected { background:#ffd4d4; box-shadow:inset 0 0 0 2.5px #e74c3c; }
 
-        /* Pencil marks */
         .cell .pencil-marks {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            grid-template-rows: repeat(3, 1fr);
-            width: 100%;
-            height: 100%;
-            padding: 2px;
-            pointer-events: none;
+            display:grid; width:100%; height:100%; padding:2px; pointer-events:none;
         }
         .cell .pencil-marks span {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.3em;
-            font-weight: 500;
-            color: #8b7b6b;
-            line-height: 1;
+            display:flex; align-items:center; justify-content:center;
+            font-weight:500; color:#8b7b6b; line-height:1;
         }
 
-        /* ── NUMBER PAD ── */
-        .number-pad {
-            display: flex;
-            gap: 5px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
+        .number-pad { display:flex; gap:5px; flex-wrap:wrap; justify-content:center; }
         .number-pad button {
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            border: 2px solid #e0d8c8;
-            background: var(--surface);
-            font-size: 1.1rem;
-            font-weight: 700;
-            cursor: pointer;
-            color: var(--deep-indigo);
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            width:38px; height:38px; border-radius:50%; border:2px solid #e0d8c8;
+            background:var(--surface); font-size:1.1rem; font-weight:700;
+            cursor:pointer; color:var(--deep-indigo); transition:var(--transition);
+            display:flex; align-items:center; justify-content:center;
         }
-        .number-pad button:hover {
-            background: #fef6ee;
-            border-color: var(--warm-coral);
-            color: var(--warm-coral);
-        }
-        .number-pad button:active {
-            background: var(--warm-coral);
-            color: #fff;
-            border-color: var(--warm-coral);
-            transform: scale(0.92);
-        }
-        .number-pad button.used-up {
-            opacity: 0.28;
-            pointer-events: none;
-            background: #e8e2d8;
-            border-color: #ddd;
-            color: #bbb;
-        }
-        .number-pad .erase-btn {
-            font-size: 0.78rem;
-            font-weight: 600;
-            width: auto;
-            padding: 0 16px;
-            border-radius: 20px;
-            letter-spacing: 0.03em;
-            color: #8B7355;
-            border-color: #d9d0c0;
-        }
+        .number-pad button:hover { background:#fef6ee; border-color:var(--warm-coral); color:var(--warm-coral); }
+        .number-pad button:active { background:var(--warm-coral); color:#fff; border-color:var(--warm-coral); transform:scale(0.92); }
+        .number-pad button.used-up { opacity:0.28; pointer-events:none; background:#e8e2d8; border-color:#ddd; color:#bbb; }
+        .number-pad .erase-btn { font-size:0.78rem; font-weight:600; width:auto; padding:0 16px; border-radius:20px; letter-spacing:0.03em; color:#8B7355; border-color:#d9d0c0; }
 
-        /* ── BUTTONS ── */
-        .actions {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            justify-content: center;
-            width: 100%;
-        }
+        .actions { display:flex; gap:8px; flex-wrap:wrap; justify-content:center; width:100%; }
         .btn {
-            padding: 10px 16px;
-            border-radius: 22px;
-            font-size: 0.82rem;
-            font-weight: 600;
-            cursor: pointer;
-            letter-spacing: 0.02em;
-            transition: var(--transition);
-            border: 2px solid transparent;
-            white-space: nowrap;
+            padding:10px 16px; border-radius:22px; font-size:0.82rem; font-weight:600;
+            cursor:pointer; letter-spacing:0.02em; transition:var(--transition);
+            border:2px solid transparent; white-space:nowrap;
         }
-        .btn-primary {
-            background: var(--warm-coral);
-            color: #fff;
-            border-color: var(--warm-coral);
-        }
-        .btn-primary:hover {
-            background: #d46a4a;
-            border-color: #d46a4a;
-            box-shadow: 0 4px 14px rgba(230,126,94,0.3);
-        }
-        .btn-outline {
-            background: transparent;
-            border-color: #d9d0c0;
-            color: var(--deep-indigo);
-        }
-        .btn-outline:hover {
-            background: #fef8f2;
-            border-color: var(--warm-coral);
-            color: var(--warm-coral);
-        }
-        .btn-small {
-            padding: 7px 13px;
-            font-size: 0.75rem;
-            border-radius: 16px;
-        }
-        .btn-toggle {
-            background: #f3f1eb;
-            border: 2px solid #e0d8c8;
-            color: var(--soft-blue);
-            cursor: pointer;
-            transition: var(--transition);
-            font-weight: 600;
-        }
-        .btn-toggle.active {
-            background: #fef0e6;
-            border-color: var(--warm-coral);
-            color: var(--warm-coral);
-        }
+        .btn-primary { background:var(--warm-coral); color:#fff; border-color:var(--warm-coral); }
+        .btn-primary:hover { background:#d46a4a; border-color:#d46a4a; box-shadow:0 4px 14px rgba(230,126,94,0.3); }
+        .btn-outline { background:transparent; border-color:#d9d0c0; color:var(--deep-indigo); }
+        .btn-outline:hover { background:#fef8f2; border-color:var(--warm-coral); color:var(--warm-coral); }
+        .btn-small { padding:7px 13px; font-size:0.75rem; border-radius:16px; }
+        .btn-toggle { background:#f3f1eb; border:2px solid #e0d8c8; color:var(--soft-blue); cursor:pointer; transition:var(--transition); font-weight:600; }
+        .btn-toggle.active { background:#fef0e6; border-color:var(--warm-coral); color:var(--warm-coral); }
 
-        /* ── MESSAGE ── */
-        .message {
-            font-size: 0.82rem;
-            font-weight: 600;
-            min-height: 20px;
-            text-align: center;
-            letter-spacing: 0.02em;
-        }
-        .message.success {
-            color: #1B4332;
-        }
-        .message.info {
-            color: var(--soft-blue);
-        }
-        .message.error-msg {
-            color: #c0392b;
-        }
+        .message { font-size:0.82rem; font-weight:600; min-height:20px; text-align:center; letter-spacing:0.02em; }
+        .message.success { color:#1B4332; } .message.info { color:var(--soft-blue); } .message.error-msg { color:#c0392b; }
 
-        /* ── FOOTER (light) ── */
         .site-footer {
-            width: 100%;
-            background: var(--footer-bg);
-            padding: 12px 18px;
-            text-align: center;
-            flex-shrink: 0;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.04);
-            border-top: 1px solid #e0ddd5;
-            margin-top: auto;
+            width:100%; background:var(--footer-bg); padding:12px 18px; text-align:center;
+            flex-shrink:0; box-shadow:0 -2px 10px rgba(0,0,0,0.04);
+            border-top:1px solid #e0ddd5; margin-top:auto;
         }
-        .site-footer .footer-brand {
-            font-size: 0.88rem;
-            font-weight: 700;
-            color: var(--footer-text);
-            letter-spacing: 0.05em;
-            margin-bottom: 2px;
+        .site-footer .footer-brand { font-size:0.88rem; font-weight:700; color:var(--footer-text); letter-spacing:0.05em; margin-bottom:2px; }
+        .site-footer .footer-tagline { font-size:0.68rem; font-weight:600; color:var(--footer-accent); letter-spacing:0.08em; text-transform:uppercase; }
+        .site-footer .footer-credits { font-size:0.62rem; color:#6b6e76; margin-top:3px; letter-spacing:0.03em; }
+
+        .worksheet-section { display:none; position:absolute; left:-9999px; top:0; width:100%; background:#fff; padding:40px 30px; }
+
+        @media screen and (min-width:480px) {
+            .site-header { padding:12px 24px; gap:16px; }
+            .site-header .logo-img { height:50px; }
+            .site-header .company-name { font-size:1.6rem; }
+            .site-header .tagline { font-size:0.75rem; }
+            .card { padding:26px 22px 22px; gap:18px; }
+            .sudoku-grid { width:min(430px,75vw); height:min(430px,75vw); }
+            .number-pad button { width:42px; height:42px; font-size:1.15rem; }
+            .btn { padding:11px 20px; font-size:0.85rem; }
+            .format-selector button, .difficulty-selector button { padding:9px 17px; font-size:0.85rem; }
         }
-        .site-footer .footer-tagline {
-            font-size: 0.68rem;
-            font-weight: 600;
-            color: var(--footer-accent);
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-        }
-        .site-footer .footer-credits {
-            font-size: 0.62rem;
-            color: #6b6e76;
-            margin-top: 3px;
-            letter-spacing: 0.03em;
+        @media screen and (min-width:768px) {
+            .app-container { max-width:620px; padding:28px 16px 32px; gap:22px; }
+            .card { padding:30px 28px 26px; gap:20px; }
+            .sudoku-grid { width:460px; height:460px; }
         }
 
-        /* ── WORKSHEET SECTION (hidden on screen) ── */
-        .worksheet-section {
-            display: none;
-            position: absolute;
-            left: -9999px;
-            top: 0;
-            width: 100%;
-            background: #fff;
-            padding: 40px 30px;
-        }
-
-        /* ── SCREEN ≥ 480px ── */
-        @media screen and (min-width: 480px) {
-            .site-header {
-                padding: 12px 24px;
-                gap: 16px;
-            }
-            .site-header .logo-img {
-                height: 50px;
-            }
-            .site-header .company-name {
-                font-size: 1.6rem;
-            }
-            .site-header .tagline {
-                font-size: 0.75rem;
-            }
-            .card {
-                padding: 26px 22px 22px;
-                gap: 18px;
-            }
-            .sudoku-grid {
-                width: min(430px, 75vw);
-                height: min(430px, 75vw);
-            }
-            .number-pad button {
-                width: 42px;
-                height: 42px;
-                font-size: 1.15rem;
-            }
-            .btn {
-                padding: 11px 20px;
-                font-size: 0.85rem;
-            }
-            .difficulty-selector button {
-                padding: 9px 17px;
-                font-size: 0.85rem;
-            }
-        }
-        @media screen and (min-width: 768px) {
-            .app-container {
-                max-width: 560px;
-                padding: 28px 16px 32px;
-                gap: 22px;
-            }
-            .card {
-                padding: 30px 28px 26px;
-                gap: 20px;
-            }
-            .sudoku-grid {
-                width: 450px;
-                height: 450px;
-            }
-        }
-
-        /* ── PRINT STYLES ── */
         @media print {
-            @page {
-                size: letter;
-                margin: 0.5in 0.45in 0.5in 0.45in;
-            }
-            body {
-                background: #fff;
-                padding: 0;
-                display: block;
-            }
-            .site-header,
-            .site-footer,
-            .install-banner,
-            .app-container,
-            .card,
-            .difficulty-selector,
-            .number-pad,
-            .actions,
-            .message,
-            .timer,
-            .grid-wrapper {
-                display: none !important;
-            }
-            .worksheet-section {
-                display: block !important;
-                position: static !important;
-                left: auto !important;
-                top: auto !important;
-                padding: 0;
-            }
-            .worksheet-section * {
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
-            }
-            .print-header {
-                display: flex !important;
-                align-items: center;
-                justify-content: center;
-                gap: 14px;
-                margin-bottom: 26px;
-                padding-bottom: 14px;
-                border-bottom: 3px solid #1B4332;
-            }
-            .print-header .print-logo {
-                height: 48px;
-                width: auto;
-            }
-            .print-header .print-brand {
-                text-align: left;
-            }
-            .print-header .print-company {
-                font-size: 1.4rem;
-                font-weight: 800;
-                color: #1B4332;
-                letter-spacing: 0.04em;
-            }
-            .print-header .print-tagline {
-                font-size: 0.68rem;
-                font-weight: 600;
-                color: #E67E5E;
-                text-transform: uppercase;
-                letter-spacing: 0.08em;
-            }
-            .print-footer {
-                display: flex !important;
-                align-items: center;
-                justify-content: center;
-                gap: 10px;
-                margin-top: 26px;
-                padding-top: 10px;
-                border-top: 2px solid #e0d6c8;
-                text-align: center;
-                font-size: 0.68rem;
-                color: #6b5e4a;
-                letter-spacing: 0.04em;
-            }
-            .print-footer .print-footer-logo {
-                height: 24px;
-                width: auto;
-            }
+            @page { size:letter; margin:0.5in 0.45in; }
+            body { background:#fff; }
+            .site-header, .site-footer, .install-banner, .app-container, .card,
+            .format-selector, .difficulty-selector, .number-pad, .actions, .message, .timer, .grid-wrapper { display:none !important; }
+            .worksheet-section { display:block !important; position:static !important; left:auto !important; top:auto !important; padding:0; }
+            .worksheet-section * { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+            .print-header { display:flex !important; align-items:center; justify-content:center; gap:14px; margin-bottom:26px; padding-bottom:14px; border-bottom:3px solid #1B4332; }
+            .print-header .print-logo { height:48px; width:auto; }
+            .print-header .print-brand { text-align:left; }
+            .print-header .print-company { font-size:1.4rem; font-weight:800; color:#1B4332; letter-spacing:0.04em; }
+            .print-header .print-tagline { font-size:0.68rem; font-weight:600; color:#E67E5E; text-transform:uppercase; letter-spacing:0.08em; }
+            .print-footer { display:flex !important; align-items:center; justify-content:center; gap:10px; margin-top:26px; padding-top:10px; border-top:2px solid #e0d6c8; text-align:center; font-size:0.68rem; color:#6b5e4a; letter-spacing:0.04em; }
+            .print-footer .print-footer-logo { height:24px; width:auto; }
         }
     </style>
 </head>
 <body>
 
-    <!-- ═══════════ INSTALL BANNER ═══════════ -->
     <div class="install-banner" id="installBanner">
-        <div class="banner-text">
-            📲 Install BrainCity Sudoku
-            <span>One Stop Math Solution – Use offline</span>
-        </div>
+        <div class="banner-text">📲 Install BrainCity Sudoku <span id="bannerInstructions">One Stop Math Solution – Use offline</span></div>
         <button class="btn-install" id="btnInstallNow">Install Now</button>
         <button class="btn-dismiss" id="btnDismissBanner" aria-label="Dismiss">✕</button>
     </div>
 
-    <!-- ═══════════ HEADER ═══════════ -->
     <header class="site-header">
-        <img
-        src="abacus_logo.png"
-        alt="BrainCity Logo"
-        class="logo-img"
-        onerror="this.style.display='none'; this.nextElementSibling.style.marginLeft='0';"
-        >
+        <img src="abacus_logo.png" alt="BrainCity Logo" class="logo-img" onerror="this.style.display='none';this.nextElementSibling.style.marginLeft='0';">
         <div class="brand-text">
             <span class="company-name">BrainCity</span>
             <span class="tagline">One Stop Math Solution</span>
         </div>
     </header>
 
-    <!-- ═══════════ MAIN APP ═══════════ -->
     <div class="app-container">
         <div class="card">
-            <!-- Difficulty -->
+            <!-- Format selector -->
+            <div class="format-selector" id="formatSelector">
+                <button data-format="4x4">🧩 4x4 (2×2)</button>
+                <button data-format="9x9" class="active">🧩 9x9 (3×3)</button>
+            </div>
+            <!-- Difficulty selector -->
             <div class="difficulty-selector" id="difficultySelector">
                 <button data-difficulty="easy" class="active">Easy</button>
                 <button data-difficulty="medium">Medium</button>
@@ -712,35 +268,13 @@
                 <button data-difficulty="expert">Expert</button>
             </div>
 
-            <!-- Timer -->
             <div class="timer" id="timer">00:00</div>
-
-            <!-- Grid -->
             <div class="grid-wrapper">
                 <div class="sudoku-grid" id="sudokuGrid"></div>
             </div>
-
-            <!-- Number Pad -->
-            <div class="number-pad" id="numberPad">
-                <button data-num="1">1</button>
-                <button data-num="2">2</button>
-                <button data-num="3">3</button>
-                <button data-num="4">4</button>
-                <button data-num="5">5</button>
-                <button data-num="6">6</button>
-                <button data-num="7">7</button>
-                <button data-num="8">8</button>
-                <button data-num="9">9</button>
-                <button class="erase-btn" data-num="0" title="Erase (Delete/Backspace)">⌫ Erase</button>
-            </div>
-
-            <!-- Pencil Toggle -->
-            <button class="btn-toggle btn-small" id="pencilToggle" title="Toggle pencil marks (Shift+number)">✏️ Pencil Marks: <strong>OFF</strong></button>
-
-            <!-- Message -->
+            <div class="number-pad" id="numberPad"></div>
+            <button class="btn-toggle btn-small" id="pencilToggle">✏️ Pencil Marks: <strong>OFF</strong></button>
             <div class="message info" id="message">Select a cell and enter a number</div>
-
-            <!-- Actions -->
             <div class="actions">
                 <button class="btn btn-primary" id="newPuzzleBtn">🔄 New Puzzle</button>
                 <button class="btn btn-outline" id="checkBtn">✅ Check</button>
@@ -750,29 +284,22 @@
         </div>
     </div>
 
-    <!-- ═══════════ FOOTER ═══════════ -->
     <footer class="site-footer">
         <div class="footer-brand">🧩 BrainCity</div>
         <div class="footer-tagline">One Stop Math Solution</div>
         <div class="footer-credits">© 2026 BrainCity – Sudoku Worksheets for Everyone</div>
     </footer>
 
-    <!-- ═══════════ WORKSHEET SECTION (print only) ═══════════ -->
     <div class="worksheet-section" id="worksheetSection">
         <div class="print-header" style="display:none;">
             <img src="abacus_logo.png" alt="BrainCity Logo" class="print-logo" onerror="this.style.display='none';">
-            <div class="print-brand">
-                <div class="print-company">BrainCity</div>
-                <div class="print-tagline">One Stop Math Solution</div>
-            </div>
+            <div class="print-brand"><div class="print-company">BrainCity</div><div class="print-tagline">One Stop Math Solution</div></div>
         </div>
-        <div style="text-align:center; margin-bottom:22px;">
+        <div style="text-align:center;margin-bottom:22px;">
             <h2 style="font-size:1.5rem;font-weight:700;letter-spacing:0.03em;margin:0 0 4px;color:#1B4332;">Sudoku Worksheet</h2>
-            <p style="font-size:0.82rem;color:#666;margin:0;">
-                Name: ____________________ &nbsp;&nbsp; Date: ______________ &nbsp;&nbsp; Score: _____ / <span id="wsPuzzleCount">4</span>
-            </p>
+            <p style="font-size:0.82rem;color:#666;margin:0;">Name: ____________________ &nbsp;&nbsp; Date: ______________ &nbsp;&nbsp; Score: _____ / <span id="wsPuzzleCount">4</span></p>
         </div>
-        <div id="worksheetGridsContainer" style="display:grid;grid-template-columns:1fr 1fr;gap:30px 24px;max-width:700px;margin:0 auto;"></div>
+        <div id="worksheetGridsContainer" style="display:grid;grid-template-columns:repeat(2,1fr);gap:30px 24px;max-width:700px;margin:0 auto;"></div>
         <div class="print-footer" style="display:none;">
             <img src="abacus_logo.png" alt="BrainCity" class="print-footer-logo" onerror="this.style.display='none';">
             <span>BrainCity — One Stop Math Solution &nbsp;|&nbsp; www.braincity.com</span>
@@ -780,531 +307,353 @@
     </div>
 
     <script>
-        (function() {
-            // ══════════════════════════════════════
-            // PWA – MANIFEST & INSTALL HANDLING
-            // ══════════════════════════════════════
+    (function() {
+        // ─── PWA Install ────────────────────────────
+        const installBanner = document.getElementById('installBanner');
+        const btnInstallNow = document.getElementById('btnInstallNow');
+        const btnDismissBanner = document.getElementById('btnDismissBanner');
+        const bannerInstructions = document.getElementById('bannerInstructions');
+        let deferredPrompt = null;
+        const isIOS = /iphone|ipad|ipod/.test(navigator.userAgent.toLowerCase());
+        const isAndroid = /android/.test(navigator.userAgent.toLowerCase());
+        const isStandalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+        if (isStandalone) installBanner.style.display = 'none';
 
-            const manifestData = {
-                name: 'BrainCity Sudoku',
-                short_name: 'Sudoku',
-                description: 'BrainCity – One Stop Math Solution. Play & Print Sudoku Worksheets.',
-                start_url: '.',
-                display: 'standalone',
-                orientation: 'portrait',
-                background_color: '#F0F2F5',
-                theme_color: '#F0F2F5',
-                icons: [{
-                    src: 'abacus_logo.png',
-                    sizes: '192x192',
-                    type: 'image/png'
-                }, {
-                    src: 'abacus_logo.png',
-                    sizes: '512x512',
-                    type: 'image/png'
-                }]
-            };
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            if (bannerInstructions) bannerInstructions.textContent = 'Tap “Install Now” to add to your home screen';
+        });
 
-            const manifestBlob = new Blob([JSON.stringify(manifestData)], { type: 'application/json' });
-            const manifestUrl = URL.createObjectURL(manifestBlob);
-            const manifestLink = document.getElementById('pwaManifest');
-            if (manifestLink) {
-                manifestLink.href = manifestUrl;
-            }
-
-            let deferredPrompt = null;
-            const installBanner = document.getElementById('installBanner');
-            const btnInstallNow = document.getElementById('btnInstallNow');
-            const btnDismissBanner = document.getElementById('btnDismissBanner');
-
-            window.addEventListener('beforeinstallprompt', (e) => {
-                e.preventDefault();
-                deferredPrompt = e;
-                setTimeout(() => {
-                    if (installBanner && deferredPrompt) {
-                        installBanner.classList.add('show');
-                    }
-                }, 1200);
-            });
-
-            if (btnInstallNow) {
-                btnInstallNow.addEventListener('click', async () => {
-                    if (!deferredPrompt) return;
-                    deferredPrompt.prompt();
-                    const { outcome } = await deferredPrompt.userChoice;
-                    console.log('PWA install outcome:', outcome);
-                    deferredPrompt = null;
-                    if (installBanner) installBanner.classList.remove('show');
-                });
-            }
-
-            if (btnDismissBanner) {
-                btnDismissBanner.addEventListener('click', () => {
-                    if (installBanner) installBanner.classList.remove('show');
-                });
-            }
-
-            if (window.matchMedia('(display-mode: standalone)').matches) {
-                if (installBanner) installBanner.classList.remove('show');
+        btnInstallNow.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                console.log('Install outcome:', outcome);
                 deferredPrompt = null;
+                installBanner.style.display = 'none';
+            } else {
+                if (isIOS) alert('To install: tap the Share icon (📤) and select "Add to Home Screen".');
+                else if (isAndroid) alert('To install: open the browser menu (⋮) and select "Install app" or "Add to Home screen".');
+                else alert('To install: look for "Install" or "Add to Home Screen" in your browser menu.');
+                installBanner.style.display = 'none';
             }
+        });
+        btnDismissBanner.addEventListener('click', () => installBanner.style.display = 'none');
 
-            // ══════════════════════════════════════
-            // SUDOKU ENGINE
-            // ══════════════════════════════════════
+        // ─── Sudoku Engine (generic) ───────────────
+        function shuffle(a) { for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
 
-            function shuffle(arr) {
-                for (let i = arr.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [arr[i], arr[j]] = [arr[j], arr[i]];
-                }
-                return arr;
+        function isValidPlacement(grid, r, c, num, size, blockRows, blockCols) {
+            for(let i=0;i<size;i++) { if(grid[r][i]===num) return false; if(grid[i][c]===num) return false; }
+            const br=Math.floor(r/blockRows)*blockRows, bc=Math.floor(c/blockCols)*blockCols;
+            for(let i=0;i<blockRows;i++) for(let j=0;j<blockCols;j++) if(grid[br+i][bc+j]===num) return false;
+            return true;
+        }
+
+        function generateCompleteGrid(size, blockRows, blockCols) {
+            const nums = Array.from({length:size},(_,i)=>i+1);
+            const grid = Array.from({length:size},()=>Array(size).fill(0));
+            for(let b=0; b<blockRows; b++) {
+                const sh = shuffle([...nums]);
+                const sr=b*blockRows, sc=b*blockCols;
+                for(let i=0;i<blockRows;i++) for(let j=0;j<blockCols;j++) grid[sr+i][sc+j] = sh[i*blockCols+j];
             }
-
-            function isValidPlacement(grid, row, col, num) {
-                const boxRow = Math.floor(row / 3) * 3;
-                const boxCol = Math.floor(col / 3) * 3;
-                for (let i = 0; i < 9; i++) {
-                    if (grid[row][i] === num) return false;
-                    if (grid[i][col] === num) return false;
-                    const br = boxRow + Math.floor(i / 3);
-                    const bc = boxCol + (i % 3);
-                    if (grid[br][bc] === num) return false;
+            function solve(g) {
+                for(let r=0;r<size;r++) for(let c=0;c<size;c++) if(g[r][c]===0) {
+                    const cand = shuffle([...nums]);
+                    for(let n of cand) if(isValidPlacement(g,r,c,n,size,blockRows,blockCols)) {
+                        g[r][c]=n; if(solve(g)) return true; g[r][c]=0;
+                    }
+                    return false;
                 }
                 return true;
             }
+            if(!solve(grid)) return generateCompleteGrid(size,blockRows,blockCols);
+            return grid;
+        }
 
-            function generateCompleteGrid() {
-                const grid = Array.from({ length: 9 }, () => Array(9).fill(0));
-                for (let box = 0; box < 3; box++) {
-                    const nums = shuffle([1,2,3,4,5,6,7,8,9]);
-                    const startRow = box * 3;
-                    const startCol = box * 3;
-                    for (let i = 0; i < 9; i++) {
-                        const r = startRow + Math.floor(i / 3);
-                        const c = startCol + (i % 3);
-                        grid[r][c] = nums[i];
+        function countSolutions(grid, limit, size, blockRows, blockCols) {
+            let count=0; const copy=grid.map(r=>[...r]);
+            function solve(g) {
+                if(count>=limit) return;
+                for(let r=0;r<size;r++) for(let c=0;c<size;c++) if(g[r][c]===0) {
+                    for(let n=1;n<=size;n++) if(isValidPlacement(g,r,c,n,size,blockRows,blockCols)) {
+                        g[r][c]=n; solve(g); g[r][c]=0; if(count>=limit) return;
                     }
+                    return;
                 }
+                count++;
+            }
+            solve(copy); return count;
+        }
 
-                function solve(g) {
-                    for (let r = 0; r < 9; r++) {
-                        for (let c = 0; c < 9; c++) {
-                            if (g[r][c] === 0) {
-                                const candidates = shuffle([1,2,3,4,5,6,7,8,9]);
-                                for (const num of candidates) {
-                                    if (isValidPlacement(g, r, c, num)) {
-                                        g[r][c] = num;
-                                        if (solve(g)) return true;
-                                        g[r][c] = 0;
-                                    }
-                                }
-                                return false;
-                            }
-                        }
+        function createPuzzle(completeGrid, targetClues, size, blockRows, blockCols) {
+            const puzzle = completeGrid.map(r=>[...r]);
+            const cellsToRemove = size*size - targetClues;
+            const positions = [];
+            for(let r=0;r<size;r++) for(let c=0;c<size;c++) positions.push({r,c});
+            shuffle(positions);
+            let removed=0;
+            for(const {r,c} of positions) {
+                if(removed>=cellsToRemove) break;
+                const bak = puzzle[r][c]; puzzle[r][c]=0;
+                if(countSolutions(puzzle,2,size,blockRows,blockCols)===1) removed++;
+                else puzzle[r][c] = bak;
+            }
+            return puzzle;
+        }
+
+        const diffClues = {
+            '4x4': { easy:{min:10,max:12}, medium:{min:7,max:9}, hard:{min:5,max:7}, expert:{min:4,max:6} },
+            '9x9': { easy:{min:38,max:42}, medium:{min:30,max:35}, hard:{min:24,max:29}, expert:{min:20,max:24} }
+        };
+
+        function getTarget(format, diff) {
+            const rge = diffClues[format][diff] || diffClues[format].medium;
+            return Math.floor(Math.random()*(rge.max-rge.min+1)) + rge.min;
+        }
+
+        function generatePuzzle(format, diff) {
+            let size, br, bc;
+            if(format==='4x4') { size=4; br=2; bc=2; }
+            else { size=9; br=3; bc=3; }
+            const comp = generateCompleteGrid(size,br,bc);
+            const target = getTarget(format, diff);
+            const puz = createPuzzle(comp, target, size,br,bc);
+            return { puzzle:puz, solution:comp, format, difficulty:diff, size };
+        }
+
+        // ─── UI State ──────────────────────────────
+        const gridEl = document.getElementById('sudokuGrid');
+        const numberPad = document.getElementById('numberPad');
+        const msgEl = document.getElementById('message');
+        const timerEl = document.getElementById('timer');
+        const pencilTog = document.getElementById('pencilToggle');
+        const wsContainer = document.getElementById('worksheetGridsContainer');
+        const wsPuzzleCount = document.getElementById('wsPuzzleCount');
+
+        let curFmt = '9x9', curDiff = 'easy';
+        let curPuz = null, curSol = null;
+        let userGrid = null, pencilMarks = null, givenCells = new Set();
+        let selRow=-1, selCol=-1, pencilMode=false, puzComplete=false;
+        let timerSec=0, timerInt=null;
+        let size=9, blkRows=3, blkCols=3;
+
+        function resetPM() { pencilMarks = Array.from({length:size},()=>Array.from({length:size},()=>new Set())); }
+        function initUserGrid() {
+            userGrid = curPuz.map(r=>[...r]);
+            givenCells.clear();
+            for(let r=0;r<size;r++) for(let c=0;c<size;c++) if(curPuz[r][c]!==0) givenCells.add(`${r},${c}`);
+            resetPM();
+        }
+        function updMsg(type,text) { msgEl.className='message '+type; msgEl.textContent=text; }
+
+        function renderNumPad() {
+            numberPad.innerHTML='';
+            for(let i=1;i<=size;i++) {
+                const btn=document.createElement('button'); btn.dataset.num=i; btn.textContent=i; numberPad.appendChild(btn);
+            }
+            const erase=document.createElement('button'); erase.className='erase-btn'; erase.dataset.num=0; erase.title='Erase'; erase.textContent='⌫ Erase'; numberPad.appendChild(erase);
+        }
+
+        function renderGrid() {
+            gridEl.style.gridTemplateColumns = `repeat(${size},1fr)`;
+            gridEl.style.gridTemplateRows = `repeat(${size},1fr)`;
+            gridEl.innerHTML='';
+            for(let r=0;r<size;r++) for(let c=0;c<size;c++) {
+                const cell=document.createElement('div'); cell.classList.add('cell');
+                cell.dataset.row=r; cell.dataset.col=c;
+                if(c<size-1 && (c+1)%blkCols===0) cell.classList.add('box-right');
+                if(r<size-1 && (r+1)%blkRows===0) cell.classList.add('box-bottom');
+                const isGiven = givenCells.has(`${r},${c}`);
+                const val = userGrid[r][c];
+                if(isGiven) { cell.classList.add('given'); cell.textContent=val||''; }
+                else if(val!==0) { cell.textContent=val; if(curSol && val!==curSol[r][c]) cell.classList.add('error'); }
+                else if(pencilMarks[r][c].size>0) {
+                    const pm=document.createElement('div'); pm.classList.add('pencil-marks');
+                    pm.style.gridTemplateColumns = `repeat(${blkCols},1fr)`;
+                    pm.style.gridTemplateRows = `repeat(${blkRows},1fr)`;
+                    for(let n=1;n<=size;n++) {
+                        const sp=document.createElement('span'); sp.textContent=pencilMarks[r][c].has(n)?n:'';
+                        sp.style.fontSize = size===4 ? '0.5em' : '0.3em';
+                        pm.appendChild(sp);
                     }
-                    return true;
+                    cell.appendChild(pm);
                 }
-
-                if (!solve(grid)) return generateCompleteGrid();
-                return grid;
+                if(r===selRow&&c===selCol) cell.classList.add('selected');
+                else if(r===selRow||c===selCol||(Math.floor(r/blkRows)===Math.floor(selRow/blkRows)&&Math.floor(c/blkCols)===Math.floor(selCol/blkCols))) cell.classList.add('related');
+                if(selRow>=0&&selCol>=0&&userGrid[selRow][selCol]!==0&&userGrid[r][c]===userGrid[selRow][selCol]&&!(r===selRow&&c===selCol)) cell.classList.add('same-number');
+                cell.addEventListener('click',()=>selectCell(r,c));
+                gridEl.appendChild(cell);
             }
+            updNumPadUsage();
+        }
 
-            function countSolutions(grid, limit = 2) {
-                let count = 0;
-                const copy = grid.map(r => [...r]);
-
-                function solve(g) {
-                    if (count >= limit) return;
-                    for (let r = 0; r < 9; r++) {
-                        for (let c = 0; c < 9; c++) {
-                            if (g[r][c] === 0) {
-                                for (let num = 1; num <= 9; num++) {
-                                    if (isValidPlacement(g, r, c, num)) {
-                                        g[r][c] = num;
-                                        solve(g);
-                                        g[r][c] = 0;
-                                        if (count >= limit) return;
-                                    }
-                                }
-                                return;
-                            }
-                        }
-                    }
-                    count++;
-                }
-                solve(copy);
-                return count;
-            }
-
-            function createPuzzle(completeGrid, targetClues) {
-                const puzzle = completeGrid.map(r => [...r]);
-                const cellsToRemove = 81 - targetClues;
-                const positions = [];
-                for (let r = 0; r < 9; r++)
-                    for (let c = 0; c < 9; c++)
-                        positions.push({ r, c });
-                shuffle(positions);
-
-                let removed = 0;
-                for (const { r, c } of positions) {
-                    if (removed >= cellsToRemove) break;
-                    const backup = puzzle[r][c];
-                    puzzle[r][c] = 0;
-                    if (countSolutions(puzzle, 2) === 1) {
-                        removed++;
-                    } else {
-                        puzzle[r][c] = backup;
-                    }
-                }
-                return puzzle;
-            }
-
-            const DIFFICULTY_CLUES = {
-                easy: { min: 38, max: 42 },
-                medium: { min: 30, max: 35 },
-                hard: { min: 24, max: 29 },
-                expert: { min: 20, max: 24 },
-            };
-
-            function getTargetClues(difficulty) {
-                const range = DIFFICULTY_CLUES[difficulty] || DIFFICULTY_CLUES.medium;
-                return Math.floor(Math.random() * (range.max - range.min + 1)) + range.min;
-            }
-
-            function generatePuzzle(difficulty = 'medium') {
-                const complete = generateCompleteGrid();
-                const puzzle = createPuzzle(complete, getTargetClues(difficulty));
-                return {
-                    puzzle,
-                    solution: complete,
-                    difficulty,
-                    clues: puzzle.flat().filter(v => v !== 0).length,
-                };
-            }
-
-            // ══════════════════════════════════════
-            // UI STATE
-            // ══════════════════════════════════════
-
-            const sudokuGridEl = document.getElementById('sudokuGrid');
-            const numberPadEl = document.getElementById('numberPad');
-            const messageEl = document.getElementById('message');
-            const timerEl = document.getElementById('timer');
-            const pencilToggleEl = document.getElementById('pencilToggle');
-            const worksheetGridsContainer = document.getElementById('worksheetGridsContainer');
-            const wsPuzzleCountEl = document.getElementById('wsPuzzleCount');
-
-            let currentPuzzle = null;
-            let currentSolution = null;
-            let userGrid = null;
-            let pencilMarks = null;
-            let givenCells = null;
-            let selectedRow = -1;
-            let selectedCol = -1;
-            let pencilMode = false;
-            let currentDifficulty = 'easy';
-            let timerSeconds = 0;
-            let timerInterval = null;
-            let puzzleComplete = false;
-
-            function resetPencilMarks() {
-                pencilMarks = Array.from({ length: 9 }, () =>
-                    Array.from({ length: 9 }, () => new Set())
-                );
-            }
-
-            function initUserGrid() {
-                userGrid = currentPuzzle.map(r => [...r]);
-                givenCells = new Set();
-                for (let r = 0; r < 9; r++)
-                    for (let c = 0; c < 9; c++)
-                        if (currentPuzzle[r][c] !== 0) givenCells.add(`${r},${c}`);
-                resetPencilMarks();
-            }
-
-            function updateMessage(type, text) {
-                messageEl.className = 'message ' + type;
-                messageEl.textContent = text;
-            }
-
-            function renderGrid() {
-                sudokuGridEl.innerHTML = '';
-                for (let r = 0; r < 9; r++) {
-                    for (let c = 0; c < 9; c++) {
-                        const cell = document.createElement('div');
-                        cell.classList.add('cell');
-                        cell.dataset.row = r;
-                        cell.dataset.col = c;
-                        if (c === 2 || c === 5) cell.classList.add('box-right');
-                        if (r === 2 || r === 5) cell.classList.add('box-bottom');
-
-                        const isGiven = givenCells.has(`${r},${c}`);
-                        const val = userGrid[r][c];
-
-                        if (isGiven) {
-                            cell.classList.add('given');
-                            cell.textContent = val || '';
-                        } else if (val !== 0) {
-                            cell.textContent = val;
-                            if (currentSolution && val !== currentSolution[r][c]) cell.classList.add('error');
-                        } else if (pencilMarks[r][c].size > 0) {
-                            const pm = document.createElement('div');
-                            pm.classList.add('pencil-marks');
-                            for (let n = 1; n <= 9; n++) {
-                                const span = document.createElement('span');
-                                span.textContent = pencilMarks[r][c].has(n) ? n : '';
-                                pm.appendChild(span);
-                            }
-                            cell.appendChild(pm);
-                        }
-
-                        if (r === selectedRow && c === selectedCol) {
-                            cell.classList.add('selected');
-                        } else if (
-                            r === selectedRow || c === selectedCol ||
-                            (Math.floor(r/3) === Math.floor(selectedRow/3) &&
-                             Math.floor(c/3) === Math.floor(selectedCol/3))
-                        ) {
-                            cell.classList.add('related');
-                        }
-
-                        if (
-                            selectedRow >=0 && selectedCol >=0 &&
-                            userGrid[selectedRow][selectedCol] !== 0 &&
-                            userGrid[r][c] === userGrid[selectedRow][selectedCol] &&
-                            !(r === selectedRow && c === selectedCol)
-                        ) {
-                            cell.classList.add('same-number');
-                        }
-
-                        cell.addEventListener('click', () => selectCell(r, c));
-                        sudokuGridEl.appendChild(cell);
-                    }
-                }
-                updateNumberPadUsage();
-            }
-
-            function updateNumberPadUsage() {
-                const counts = {};
-                for (let n = 1; n <= 9; n++) counts[n] = 0;
-                for (let r = 0; r < 9; r++)
-                    for (let c = 0; c < 9; c++)
-                        if (userGrid[r][c] !== 0 && givenCells.has(`${r},${c}`)) counts[userGrid[r][c]] = (counts[userGrid[r][c]] || 0) + 1;
-                for (let r = 0; r < 9; r++)
-                    for (let c = 0; c < 9; c++)
-                        if (userGrid[r][c] !== 0 && !givenCells.has(`${r},${c}`)) counts[userGrid[r][c]] = (counts[userGrid[r][c]] || 0) + 1;
-
-                numberPadEl.querySelectorAll('button[data-num]').forEach(btn => {
-                    const num = parseInt(btn.dataset.num);
-                    if (num >=1 && num <=9) {
-                        btn.classList.toggle('used-up', counts[num] >= 9);
-                    }
-                });
-            }
-
-            function selectCell(r, c) {
-                if (puzzleComplete) return;
-                selectedRow = r;
-                selectedCol = c;
-                renderGrid();
-                updateMessage('info', `Selected: Row ${r+1}, Column ${c+1}`);
-            }
-
-            function placeNumber(num) {
-                if (puzzleComplete) return;
-                if (selectedRow < 0 || selectedCol < 0) { updateMessage('info', 'Select a cell first'); return; }
-                if (givenCells.has(`${selectedRow},${selectedCol}`)) { updateMessage('info', 'Cannot change given numbers'); return; }
-
-                if (pencilMode && num >=1 && num <=9) {
-                    const pmSet = pencilMarks[selectedRow][selectedCol];
-                    pmSet.has(num) ? pmSet.delete(num) : pmSet.add(num);
-                    userGrid[selectedRow][selectedCol] = 0;
-                } else if (num === 0) {
-                    userGrid[selectedRow][selectedCol] = 0;
-                    pencilMarks[selectedRow][selectedCol].clear();
-                } else {
-                    userGrid[selectedRow][selectedCol] = num;
-                    pencilMarks[selectedRow][selectedCol].clear();
-                }
-                renderGrid();
-                checkCompletion();
-                updateMessage('info', num === 0 ? 'Cell cleared' : pencilMode ? `Pencil mark toggled for ${num}` : `Placed ${num} at Row ${selectedRow+1}, Col ${selectedCol+1}`);
-            }
-
-            function checkCompletion() {
-                for (let r = 0; r < 9; r++)
-                    for (let c = 0; c < 9; c++)
-                        if (userGrid[r][c] === 0) return;
-                if (!currentSolution) return;
-                let correct = true;
-                for (let r = 0; r < 9; r++) {
-                    for (let c = 0; c < 9; c++) {
-                        if (userGrid[r][c] !== currentSolution[r][c]) { correct = false; break; }
-                    }
-                    if (!correct) break;
-                }
-                if (correct) {
-                    puzzleComplete = true;
-                    stopTimer();
-                    updateMessage('success', '🎉 Congratulations! Puzzle solved correctly!');
-                    selectedRow = -1;
-                    selectedCol = -1;
-                    renderGrid();
-                }
-            }
-
-            function startTimer() { stopTimer(); timerSeconds = 0; updateTimerDisplay(); timerInterval = setInterval(() => { timerSeconds++; updateTimerDisplay(); }, 1000); }
-            function stopTimer() { if (timerInterval) { clearInterval(timerInterval); timerInterval = null; } }
-            function updateTimerDisplay() { const m = Math.floor(timerSeconds/60), s = timerSeconds%60; timerEl.textContent = String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0'); }
-
-            function loadNewPuzzle(difficulty) {
-                stopTimer();
-                const data = generatePuzzle(difficulty);
-                currentPuzzle = data.puzzle;
-                currentSolution = data.solution;
-                currentDifficulty = difficulty;
-                initUserGrid();
-                selectedRow = -1;
-                selectedCol = -1;
-                puzzleComplete = false;
-                pencilMode = false;
-                updatePencilToggleUI();
-                renderGrid();
-                updateMessage('info', `New ${difficulty} puzzle — ${data.clues} clues given. Good luck!`);
-                startTimer();
-            }
-
-            function revealSolution() {
-                if (!currentSolution || puzzleComplete) { updateMessage('info', puzzleComplete ? 'Puzzle already solved!' : 'No puzzle loaded'); return; }
-                stopTimer();
-                for (let r = 0; r < 9; r++)
-                    for (let c = 0; c < 9; c++) userGrid[r][c] = currentSolution[r][c];
-                resetPencilMarks();
-                puzzleComplete = true;
-                selectedRow = -1; selectedCol = -1;
-                renderGrid();
-                updateMessage('info', 'Solution revealed.');
-            }
-
-            function checkSolution() {
-                if (!currentSolution) return;
-                if (puzzleComplete) { updateMessage('success', 'Puzzle is already complete and correct!'); return; }
-                let hasEmpty = false, hasError = false;
-                for (let r = 0; r < 9; r++)
-                    for (let c = 0; c < 9; c++) {
-                        if (userGrid[r][c] === 0) hasEmpty = true;
-                        else if (userGrid[r][c] !== currentSolution[r][c]) hasError = true;
-                    }
-                if (hasError) { updateMessage('error-msg', '⚠️ Some entries are incorrect. Check highlighted cells.'); renderGrid(); }
-                else if (hasEmpty) { updateMessage('info', 'So far so good! No errors found. Keep going!'); }
-                else { puzzleComplete = true; stopTimer(); updateMessage('success', '🎉 Perfect! Puzzle solved!'); renderGrid(); }
-            }
-
-            function updatePencilToggleUI() {
-                if (pencilMode) { pencilToggleEl.innerHTML = '✏️ Pencil Marks: <strong>ON</strong>'; pencilToggleEl.classList.add('active'); }
-                else { pencilToggleEl.innerHTML = '✏️ Pencil Marks: <strong>OFF</strong>'; pencilToggleEl.classList.remove('active'); }
-            }
-
-            function renderWorksheetPuzzle(container, puzzle, index) {
-                const wrapper = document.createElement('div');
-                wrapper.style.cssText = 'text-align:center;page-break-inside:avoid;';
-                const label = document.createElement('p');
-                label.textContent = `Puzzle ${index+1}`;
-                label.style.cssText = 'font-size:0.82rem;font-weight:700;margin:0 0 5px;color:#1B4332;letter-spacing:0.03em;';
-                wrapper.appendChild(label);
-                const table = document.createElement('table');
-                table.style.cssText = 'border-collapse:collapse;margin:0 auto;border:3px solid #3a3028;';
-                for (let r = 0; r < 9; r++) {
-                    const tr = document.createElement('tr');
-                    for (let c = 0; c < 9; c++) {
-                        const td = document.createElement('td');
-                        const val = puzzle[r][c];
-                        td.textContent = val !== 0 ? val : '';
-                        td.style.cssText = [
-                            'width:26px;height:26px;text-align:center;vertical-align:middle;',
-                            'font-size:14px;font-family:"Segoe UI","Inter",sans-serif;',
-                            'font-weight:' + (val !==0 ? '700' : '400') + ';color:#1a1a1a;',
-                            'border:1px solid #c8bfb0;',
-                            val !==0 ? 'background:#fafaf7;' : 'background:#fff;',
-                            (c===2||c===5) ? 'border-right:3px solid #3a3028;' : '',
-                            (r===2||r===5) ? 'border-bottom:3px solid #3a3028;' : '',
-                            (c===0) ? 'border-left:3px solid #3a3028;' : '',
-                            (r===0) ? 'border-top:3px solid #3a3028;' : '',
-                            (c===8) ? 'border-right:3px solid #3a3028;' : '',
-                            (r===8) ? 'border-bottom:3px solid #3a3028;' : '',
-                        ].join('');
-                        tr.appendChild(td);
-                    }
-                    table.appendChild(tr);
-                }
-                wrapper.appendChild(table);
-                container.appendChild(wrapper);
-            }
-
-            function generateWorksheet() {
-                const puzzlesData = [];
-                for (let i = 0; i < 4; i++) puzzlesData.push(generatePuzzle(currentDifficulty));
-                worksheetGridsContainer.innerHTML = '';
-                puzzlesData.forEach((d, i) => renderWorksheetPuzzle(worksheetGridsContainer, d.puzzle, i));
-                wsPuzzleCountEl.textContent = 4;
-            }
-
-            function printWorksheet() { generateWorksheet(); setTimeout(() => window.print(), 200); }
-
-            // ══════════════════════════════════════
-            // EVENT LISTENERS
-            // ══════════════════════════════════════
-
-            document.getElementById('difficultySelector').addEventListener('click', (e) => {
-                const btn = e.target.closest('button');
-                if (!btn || !btn.dataset.difficulty) return;
-                document.querySelectorAll('#difficultySelector button').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                currentDifficulty = btn.dataset.difficulty;
-                loadNewPuzzle(currentDifficulty);
+        function updNumPadUsage() {
+            const max = size;
+            const counts = {};
+            for(let n=1;n<=size;n++) counts[n]=0;
+            for(let r=0;r<size;r++) for(let c=0;c<size;c++) if(userGrid[r][c]!==0) counts[userGrid[r][c]]=(counts[userGrid[r][c]]||0)+1;
+            numberPad.querySelectorAll('button[data-num]').forEach(b=>{
+                const n=parseInt(b.dataset.num);
+                if(n>=1&&n<=size) b.classList.toggle('used-up', counts[n]>=max);
             });
+        }
 
-            numberPadEl.addEventListener('click', (e) => {
-                const btn = e.target.closest('button');
-                if (!btn || btn.dataset.num === undefined) return;
-                placeNumber(parseInt(btn.dataset.num));
-            });
+        function selectCell(r,c) { if(puzComplete) return; selRow=r; selCol=c; renderGrid(); updMsg('info',`Selected: Row ${r+1}, Column ${c+1}`); }
 
-            pencilToggleEl.addEventListener('click', () => {
-                pencilMode = !pencilMode;
-                updatePencilToggleUI();
-                updateMessage('info', pencilMode ? 'Pencil mark mode ON' : 'Pencil mark mode OFF');
-            });
+        function placeNum(num) {
+            if(puzComplete) return;
+            if(selRow<0||selCol<0) { updMsg('info','Select a cell first'); return; }
+            if(givenCells.has(`${selRow},${selCol}`)) { updMsg('info','Cannot change given numbers'); return; }
+            if(pencilMode&&num>=1&&num<=size) {
+                const pmSet = pencilMarks[selRow][selCol];
+                pmSet.has(num)?pmSet.delete(num):pmSet.add(num);
+                userGrid[selRow][selCol]=0;
+            } else if(num===0) { userGrid[selRow][selCol]=0; pencilMarks[selRow][selCol].clear(); }
+            else { userGrid[selRow][selCol]=num; pencilMarks[selRow][selCol].clear(); }
+            renderGrid(); checkDone();
+            updMsg('info',num===0?'Cell cleared':pencilMode?`Pencil mark toggled for ${num}`:`Placed ${num} at Row ${selRow+1}, Col ${selCol+1}`);
+        }
 
-            document.getElementById('newPuzzleBtn').addEventListener('click', () => loadNewPuzzle(currentDifficulty));
-            document.getElementById('checkBtn').addEventListener('click', checkSolution);
-            document.getElementById('revealBtn').addEventListener('click', revealSolution);
-            document.getElementById('printWorksheetBtn').addEventListener('click', printWorksheet);
+        function checkDone() {
+            for(let r=0;r<size;r++) for(let c=0;c<size;c++) if(userGrid[r][c]===0) return;
+            if(!curSol) return;
+            let ok=true;
+            for(let r=0;r<size;r++) { for(let c=0;c<size;c++) if(userGrid[r][c]!==curSol[r][c]){ok=false;break;} if(!ok) break; }
+            if(ok) {
+                puzComplete=true; stopTimer(); updMsg('success','🎉 Congratulations! Puzzle solved correctly!');
+                selRow=-1; selCol=-1; renderGrid();
+            }
+        }
 
-            document.addEventListener('keydown', (e) => {
-                if (puzzleComplete && !['r','R','n','N'].includes(e.key)) return;
-                const key = e.key;
-                if (key === 'ArrowUp' && selectedRow > 0) { e.preventDefault(); selectCell(selectedRow-1, selectedCol); }
-                else if (key === 'ArrowDown' && selectedRow < 8) { e.preventDefault(); selectCell(selectedRow+1, selectedCol); }
-                else if (key === 'ArrowLeft' && selectedCol > 0) { e.preventDefault(); selectCell(selectedRow, selectedCol-1); }
-                else if (key === 'ArrowRight' && selectedCol < 8) { e.preventDefault(); selectCell(selectedRow, selectedCol+1); }
-                else if (key >= '1' && key <= '9') { e.preventDefault();
-                    if (e.shiftKey) { const was = pencilMode; pencilMode = true; placeNumber(parseInt(key)); pencilMode = was; updatePencilToggleUI(); }
-                    else placeNumber(parseInt(key));
-                } else if (key === '0' || key === 'Delete' || key === 'Backspace') { e.preventDefault(); placeNumber(0); }
-                else if (key === 'n' || key === 'N') { e.preventDefault(); loadNewPuzzle(currentDifficulty); }
-                else if (key === 'p' || key === 'P') { e.preventDefault(); pencilMode = !pencilMode; updatePencilToggleUI(); updateMessage('info', pencilMode ? 'Pencil mark mode ON' : 'Pencil mark mode OFF'); }
-            });
+        function startTimer(){stopTimer();timerSec=0;updateTimer();timerInt=setInterval(()=>{timerSec++;updateTimer();},1000);}
+        function stopTimer(){if(timerInt){clearInterval(timerInt);timerInt=null;}}
+        function updateTimer(){const m=Math.floor(timerSec/60),s=timerSec%60;timerEl.textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');}
 
-            // ══════════════════════════════════════
-            // INIT
-            // ══════════════════════════════════════
-            loadNewPuzzle('easy');
-            generateWorksheet();
+        function loadPuz(format, diff) {
+            stopTimer();
+            curFmt=format; curDiff=diff;
+            const data = generatePuzzle(format, diff);
+            curPuz=data.puzzle; curSol=data.solution;
+            size=data.size; blkRows=(format==='4x4'?2:3); blkCols=blkRows;
+            initUserGrid(); selRow=-1; selCol=-1; puzComplete=false; pencilMode=false;
+            updatePencilUI();
+            renderNumPad(); renderGrid();
+            updMsg('info',`New ${format} ${diff} puzzle. Good luck!`);
+            startTimer();
+        }
 
-            console.log('🧩 BrainCity Sudoku – Light header/footer production ready');
-        })();
+        function revealSol() {
+            if(!curSol||puzComplete) { updMsg('info',puzComplete?'Puzzle already solved!':'No puzzle loaded'); return; }
+            stopTimer();
+            for(let r=0;r<size;r++) for(let c=0;c<size;c++) userGrid[r][c]=curSol[r][c];
+            resetPM(); puzComplete=true; selRow=-1; selCol=-1; renderGrid();
+            updMsg('info','Solution revealed.');
+        }
+
+        function checkSol() {
+            if(!curSol) return;
+            if(puzComplete) { updMsg('success','Puzzle is already complete and correct!'); return; }
+            let empty=false, err=false;
+            for(let r=0;r<size;r++) for(let c=0;c<size;c++) {
+                if(userGrid[r][c]===0) empty=true;
+                else if(userGrid[r][c]!==curSol[r][c]) err=true;
+            }
+            if(err) { updMsg('error-msg','⚠️ Some entries are incorrect.'); renderGrid(); }
+            else if(empty) { updMsg('info','No errors found. Keep going!'); }
+            else { puzComplete=true; stopTimer(); updMsg('success','🎉 Perfect!'); renderGrid(); }
+        }
+
+        function updatePencilUI() {
+            if(pencilMode) { pencilTog.innerHTML='✏️ Pencil Marks: <strong>ON</strong>'; pencilTog.classList.add('active'); }
+            else { pencilTog.innerHTML='✏️ Pencil Marks: <strong>OFF</strong>'; pencilTog.classList.remove('active'); }
+        }
+
+        function renderWSPuzzle(container, puzzle, idx, format) {
+            const w=document.createElement('div'); w.style.cssText='text-align:center;page-break-inside:avoid;';
+            const lbl=document.createElement('p'); lbl.textContent=`Puzzle ${idx+1}`; lbl.style.cssText='font-size:0.82rem;font-weight:700;margin:0 0 5px;color:#1B4332;'; w.appendChild(lbl);
+            const tbl=document.createElement('table'); tbl.style.cssText='border-collapse:collapse;margin:0 auto;border:3px solid #3a3028;';
+            const sz=(format==='4x4'?4:9), br=(format==='4x4'?2:3), bc=br;
+            for(let r=0;r<sz;r++) {
+                const tr=document.createElement('tr');
+                for(let c=0;c<sz;c++) {
+                    const td=document.createElement('td'); const v=puzzle[r][c]; td.textContent=v!==0?v:'';
+                    let st=`width:${sz===4?32:26}px;height:${sz===4?32:26}px;text-align:center;vertical-align:middle;font-family:'Segoe UI','Inter',sans-serif;font-weight:${v!==0?'700':'400'};color:#1a1a1a;border:1px solid #c8bfb0;${v!==0?'background:#fafaf7;':'background:#fff;'}`;
+                    if(c<sz-1&&(c+1)%bc===0) st+='border-right:3px solid #3a3028;';
+                    if(r<sz-1&&(r+1)%br===0) st+='border-bottom:3px solid #3a3028;';
+                    if(c===0) st+='border-left:3px solid #3a3028;';
+                    if(r===0) st+='border-top:3px solid #3a3028;';
+                    if(c===sz-1) st+='border-right:3px solid #3a3028;';
+                    if(r===sz-1) st+='border-bottom:3px solid #3a3028;';
+                    td.style.cssText=st; tr.appendChild(td);
+                }
+                tbl.appendChild(tr);
+            }
+            w.appendChild(tbl); container.appendChild(w);
+        }
+
+        function genWorksheet() {
+            const puzzles=[];
+            const num = (curFmt==='4x4') ? 6 : 4; // 6 small puzzles, 2 per row = 3 rows; 4 large puzzles, 2 per row = 2 rows
+            for(let i=0;i<num;i++) puzzles.push(generatePuzzle(curFmt,curDiff));
+            wsContainer.innerHTML='';
+            // Always 2 columns per row as requested for both formats
+            wsContainer.style.gridTemplateColumns = 'repeat(2,1fr)';
+            puzzles.forEach((d,i)=>renderWSPuzzle(wsContainer,d.puzzle,i,curFmt));
+            wsPuzzleCount.textContent = num;
+        }
+
+        function printWS() { genWorksheet(); setTimeout(()=>window.print(),200); }
+
+        // ─── Event Listeners ────────────────────────
+        document.getElementById('formatSelector').addEventListener('click',e=>{
+            const b=e.target.closest('button'); if(!b||!b.dataset.format) return;
+            document.querySelectorAll('#formatSelector button').forEach(x=>x.classList.remove('active'));
+            b.classList.add('active');
+            loadPuz(b.dataset.format, curDiff);
+        });
+        document.getElementById('difficultySelector').addEventListener('click',e=>{
+            const b=e.target.closest('button'); if(!b||!b.dataset.difficulty) return;
+            document.querySelectorAll('#difficultySelector button').forEach(x=>x.classList.remove('active'));
+            b.classList.add('active');
+            curDiff=b.dataset.difficulty;
+            loadPuz(curFmt, curDiff);
+        });
+        numberPad.addEventListener('click',e=>{
+            const b=e.target.closest('button'); if(!b||b.dataset.num===undefined) return;
+            placeNum(parseInt(b.dataset.num));
+        });
+        pencilTog.addEventListener('click',()=>{ pencilMode=!pencilMode; updatePencilUI(); updMsg('info',pencilMode?'Pencil mark mode ON':'Pencil mark mode OFF'); });
+        document.getElementById('newPuzzleBtn').addEventListener('click',()=>loadPuz(curFmt,curDiff));
+        document.getElementById('checkBtn').addEventListener('click',checkSol);
+        document.getElementById('revealBtn').addEventListener('click',revealSol);
+        document.getElementById('printWorksheetBtn').addEventListener('click',printWS);
+
+        document.addEventListener('keydown',e=>{
+            if(puzComplete && !['r','R','n','N'].includes(e.key)) return;
+            const k=e.key;
+            if(k==='ArrowUp'&&selRow>0){e.preventDefault();selectCell(selRow-1,selCol);}
+            else if(k==='ArrowDown'&&selRow<size-1){e.preventDefault();selectCell(selRow+1,selCol);}
+            else if(k==='ArrowLeft'&&selCol>0){e.preventDefault();selectCell(selRow,selCol-1);}
+            else if(k==='ArrowRight'&&selCol<size-1){e.preventDefault();selectCell(selRow,selCol+1);}
+            else if(k>='1'&&k<='9'){
+                const num=parseInt(k); if(num>size) return;
+                e.preventDefault();
+                if(e.shiftKey){const was=pencilMode;pencilMode=true;placeNum(num);pencilMode=was;updatePencilUI();}
+                else placeNum(num);
+            }
+            else if(k==='0'||k==='Delete'||k==='Backspace'){e.preventDefault();placeNum(0);}
+            else if(k==='n'||k==='N'){e.preventDefault();loadPuz(curFmt,curDiff);}
+            else if(k==='p'||k==='P'){e.preventDefault();pencilMode=!pencilMode;updatePencilUI();}
+        });
+
+        // Init
+        loadPuz('9x9','easy');
+        genWorksheet();
+        console.log('🧩 BrainCity Sudoku – 4x4 & 9x9 ready (2 per row)');
+    })();
     </script>
 </body>
 </html>
